@@ -1,0 +1,58 @@
+Arduino Micro-controller Code: 
+ 
+// Define output pins for binary representation of num1 (Dice 1) and num2 (Dice 2) 
+int num1Pins[3] = {2, 3, 4};  // Pins for num1 (Dice 1) output 
+//int num2Pins[3] = {5, 6, 7};  // Pins for num2 (Dice 2) output 
+// Define input pin for the button 
+int buttonPin = 8;  // Pin for the button 
+ 
+void setup() { 
+  // Initialize output pins as OUTPUT for both num1 and num2 
+  for (int i = 0; i < 3; i++) { 
+    pinMode(num1Pins[i], OUTPUT); 
+    //pinMode(num2Pins[i], OUTPUT); 
+  } 
+   
+  // Initialize button pin as INPUT with internal pull-up resistor 
+  pinMode(buttonPin, INPUT_PULLUP); 
+ 
+  // Initialize serial communication to display the numbers on the Serial Monitor 
+  Serial.begin(9600); 
+ 
+  // Seed random function for more randomness 
+  randomSeed(analogRead(0)); 
+} 
+ 
+void loop() { 
+  // Wait for the button to be pressed 
+  if (digitalRead(buttonPin) == LOW) {  // Button pressed (active LOW) 
+    delay(50);  // Debounce delay 
+     
+    if (digitalRead(buttonPin) == LOW) {  // Confirm button press 
+      // Generate two random numbers between 1 and 6 
+      int num1 = random(1, 7);  // Random number for Dice 1 
+      //int num2 = random(1, 7);  // Random number for Dice 2 
+ 
+      // Output the binary values of num1 and num2 on the assigned pins 
+      outputBinary(num1, num1Pins); 
+      //outputBinary(num2, num2Pins);      
+ 
+      // Display the generated numbers in the Serial Monitor 
+      Serial.print("Button pressed, Dice : "); 
+      Serial.println(num1);      
+ 
+      // Wait for the button to be released 
+      while (digitalRead(buttonPin) == LOW) { 
+        delay(10);  // Small delay to avoid bouncing issues 
+      } 
+    } 
+  } 
+} 
+ 
+// Function to output a 3-bit binary number to the specified pins 
+void outputBinary(int number, int pins[]) { 
+  for (int i = 0; i < 3; i++) { 
+    digitalWrite(pins[i], bitRead(number, i));  // Output each bit to the corresponding pin 
+  } 
+} 
+ 
